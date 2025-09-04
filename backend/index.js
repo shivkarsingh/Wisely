@@ -9,16 +9,22 @@ import courseRouter from "./routes/courseRoute.js"
 import paymentRouter from "./routes/paymentRoute.js"
 import aiRouter from "./routes/aiRoute.js"
 import reviewRouter from "./routes/reviewRoute.js"
+
 dotenv.config()
 
-let port = process.env.PORT
-let app = express()
+// connect DB once (cold start)
+connectDb()
+
+const app = express()
+
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin:"https://wisely-chi.vercel.app",
-    credentials:true
+  origin: ["https://wisely-chi.vercel.app", "http://localhost:3000"],
+  credentials: true
 }))
+
+// Routes
 app.use("/api/auth", authRouter)
 app.use("/api/user", userRouter)
 app.use("/api/course", courseRouter)
@@ -26,13 +32,10 @@ app.use("/api/payment", paymentRouter)
 app.use("/api/ai", aiRouter)
 app.use("/api/review", reviewRouter)
 
-
-app.get("/" , (req,res)=>{
-    res.send("Hello From Server")
+app.get("/", (req, res) => {
+  res.send("Hello From Server")
 })
 
-app.listen(port , ()=>{
-    console.log("Server Started")
-    connectDb()
-})
-
+// ❌ DO NOT use app.listen on Vercel
+// ✅ Export app as default
+export default app
