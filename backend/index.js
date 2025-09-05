@@ -17,12 +17,21 @@ connectDb()
 
 const app = express()
 
+// CORS options
+const corsOptions = {
+  origin: ["https://wisely-chi.vercel.app", "http://localhost:3000"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}
+
+app.use(cors(corsOptions))
+
+//
+app.options("*", cors(corsOptions))
+
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors({
-  origin: ["https://wisely-chi.vercel.app", "http://localhost:3000"],
-  credentials: true
-}))
 
 // Routes
 app.use("/api/auth", authRouter)
@@ -36,6 +45,5 @@ app.get("/", (req, res) => {
   res.send("Hello From Server")
 })
 
-// ❌ DO NOT use app.listen on Vercel
-// ✅ Export app as default
+// Export for Vercel
 export default app
